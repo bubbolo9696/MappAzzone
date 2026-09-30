@@ -1,0 +1,24 @@
+MappAzzone 2.0 — videomapping essenziale (100% offline)
+=====================================================
+
+INSTALLAZIONE
+1. Copia MappAzzone.app in /Applicazioni (o tienila dove vuoi).
+2. PRIMO AVVIO: l'app non è firmata Apple, quindi NON aprirla con doppio click
+   la prima volta. Fai click destro su MappAzzone.app > Apri > Apri.
+   Dalla seconda volta si apre normalmente.
+3. Funziona senza internet: video, mapping, timeline e salvataggi sono locali.
+
+USO RAPIDO
+1. Trascina video/immagini nel pannello Media, click per assegnarli alla slice.
+2. Trascina i 4 angoli di ogni slice sui bordi reali (Alt = snap alla griglia).
+3. Timeline in basso: trascina i blocchi per i tempi di apparizione,
+   regola dissolvenze dal pannello slice, Spazio per provare.
+4. PROIETTA in fullscreen sul proiettore (ESC esce, B blackout).
+
+SCORCIATOIE (stile Premiere — legenda completa con ? o pulsante ⌨):
+Spazio/K play-pausa · J/L navetta · frecce fotogrammi e punti di montaggio
+(Alt+frecce = sposta slice) · C lama · B lama alla testina · Q/W trim ·
+M marker · S magnete · ⌘Z annulla · ⌘X/C/V taglia-copia-incolla ·
+⌘D duplica · Canc elimina · E/⌘S salva · ⌘O apri · F proietta · B blackout.
+
+REQUISITI: macOS 11+ (Intel e Apple Silicon), nessun altro software.
