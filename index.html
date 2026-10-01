@@ -927,9 +927,12 @@ function loop(){requestAnimationFrame(loop);
     if(TL.t>=TL.dur){if(TL.loop)TL.t%=TL.dur;else{TL.t=TL.dur;setRate(0);}}
     else if(TL.t<0){if(TL.loop)TL.t=((TL.t%TL.dur)+TL.dur)%TL.dur;else{TL.t=0;setRate(0);}}
     // ferma/riparti se non ci sono clip dopo
-    if(TL.rate>0&&!TL.loop){
+    if(TL.rate>0){
       const hasAfter=slices.some(s=>{const a=s.t||DEFT();return s.enabled&&a.start>TL.t+0.01;});
-      if(!hasAfter){TL.t=TL.dur;setRate(0);say('fine clip — stop');}
+      if(!hasAfter){
+        if(TL.loop){TL.t=0;syncVideosToTimeline();kickMedia();say('fine clip — riparto da capo');}
+        else{TL.t=TL.dur;setRate(0);say('fine clip — stop');}
+      }
     }
     followView();}
   // video comandati dalla testina (master clock) — vedi driveVideos()
