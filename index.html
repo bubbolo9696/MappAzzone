@@ -115,10 +115,19 @@ h5:first-child{margin-top:0}
 .tlname button.eye.off{opacity:.3;filter:grayscale(1)}
 .mk{position:absolute;top:1px;width:11px;height:11px;background:var(--acc);transform:translateX(-50%) rotate(45deg);border-radius:2px;cursor:pointer;box-shadow:0 0 8px rgba(33,210,237,.8)}
 #tlruler{cursor:ew-resize}
+.tllane{cursor:pointer}
+.tlblock{cursor:grab}
+.tlblock:active{cursor:grabbing}
 .tlzoom{display:flex;gap:2px;align-items:center}
 .ltabs{display:flex;gap:4px;margin-bottom:8px}
 .ltabs button{flex:1;background:transparent;border:1px solid var(--line2);color:var(--dim);border-radius:8px;padding:5px 4px;font-size:11px;font-weight:700;cursor:pointer;font-family:"DM Mono",monospace;text-transform:uppercase;letter-spacing:.08em}
 .ltabs button.act{background:var(--txt);border-color:var(--txt);color:#060b16}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.qgrid label{display:flex;flex-direction:column;gap:2px;font-family:"DM Mono",monospace;font-size:9.5px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+.qgrid label input[type=range]{width:100%;accent-color:var(--acc)}
+.qgrid label span{font-size:10px;color:var(--txt);text-align:right}
+.qrow{display:flex;gap:6px;margin-top:8px}
+#qbLoop.on{background:linear-gradient(135deg,rgba(33,210,237,.28),rgba(10,127,212,.28));border-color:var(--acc);color:var(--acc)}
 .fxprop{border:1px solid var(--line);border-radius:8px;padding:5px 6px;margin-bottom:6px;background:var(--bg3)}
 .fxh{display:flex;align-items:center;gap:4px}
 .fxh .sw{background:none;border:1px solid var(--line2);border-radius:6px;color:var(--dim);cursor:pointer;font-size:11px;padding:1px 5px}
@@ -182,7 +191,7 @@ kbd{background:#101a30;border:1px solid var(--line2);border-bottom-width:2px;bor
 
 <div id="main">
   <div id="left"><div class="pane">
-    <div class="ltabs"><button class="act" id="tabMedia">Media</button><button id="tabFX">Controllo effetti</button></div>
+    <div class="ltabs"><button class="act" id="tabMedia">Media</button><button id="tabFX">Effetti</button><button id="tabQuick">Rapida</button></div>
     <div id="paneMedia">
     <h5>Media · click = modifica + assegna</h5>
     <div id="medlist"></div>
@@ -194,19 +203,23 @@ kbd{background:#101a30;border:1px solid var(--line2);border-bottom-width:2px;bor
       <div id="fxlist"></div>
       <div class="hint">◷ = animazione · ◆ aggiunge keyframe alla testina · i valori con ◷ attivo scrivono keyframe · alt+click sui ◆ in timeline li toglie</div>
     </div>
+    <div id="paneQuick" style="display:none">
+      <h5>Regolazione rapida</h5>
+      <div class="qgrid">
+        <label>X<input type="range" id="qbX" min="-2" max="2" step="0.05" value="0"><span id="qbXV">0</span></label>
+        <label>Y<input type="range" id="qbY" min="-2" max="2" step="0.05" value="0"><span id="qbYV">0</span></label>
+        <label>Scala<input type="range" id="qbZ" min="0.2" max="3" step="0.05" value="1"><span id="qbZV">1</span></label>
+        <label>Rotazione<input type="range" id="qbR" min="-180" max="180" step="1" value="0"><span id="qbRV">0</span></label>
+        <label>Opacità<input type="range" id="qbO" min="0" max="100" step="1" value="100"><span id="qbOV">100</span></label>
+      </div>
+      <div class="qrow">
+        <button class="btn small" id="qbReset" style="flex:1" title="Azzera trasformazioni">reset</button>
+        <button class="btn small" id="qbLoop" style="flex:1" title="Loop clip indipendente dalla timeline">⟳ loop clip</button>
+      </div>
+    </div>
   </div></div>
   <div id="center">
     <div id="editwrap"><canvas id="mapCv" width="1280" height="720"></canvas></div>
-    <div id="quickbar">
-      <span class="qb-title">⚡ Rapida</span>
-      <label>X<input type="range" id="qbX" min="-2" max="2" step="0.05" value="0"><span id="qbXV">0</span></label>
-      <label>Y<input type="range" id="qbY" min="-2" max="2" step="0.05" value="0"><span id="qbYV">0</span></label>
-      <label>Scala<input type="range" id="qbZ" min="0.2" max="3" step="0.05" value="1"><span id="qbZV">1</span></label>
-      <label>Rot<input type="range" id="qbR" min="-180" max="180" step="1" value="0"><span id="qbRV">0</span></label>
-      <label>Opac<input type="range" id="qbO" min="0" max="100" step="1" value="100"><span id="qbOV">100</span></label>
-      <button class="btn small" id="qbReset" title="Azzera trasformazioni">reset</button>
-      <button class="btn small" id="qbLoop" title="Loop clip indipendente dalla timeline">⟳ loop clip</button>
-    </div>
     <div id="toolbar">
       <span class="hint">Trascina gli <b>angoli</b> · <kbd>←→↑↓</kbd> timeline · <kbd>Alt</kbd>+frecce sposta slice · <kbd>Canc</kbd> elimina · <kbd>⌨</kbd> tutte le scorciatoie · <kbd>F</kbd> proietta</span>
     </div>
@@ -630,6 +643,18 @@ function renderSlices(ctx,W,H,editor){
   cv.addEventListener('mousedown',down);cv.addEventListener('touchstart',down,{passive:false});
   window.addEventListener('mousemove',move);window.addEventListener('mouseup',()=>drag=null);
   cv.addEventListener('touchmove',move,{passive:false});cv.addEventListener('touchend',()=>drag=null);
+  // cursore contestuale: crosshair (mapping), move (sposto slice), grab (trascino)
+  cv.addEventListener('mousemove',e=>{
+    if(drag){cv.style.cursor=drag.c>=0?'crosshair':'grabbing';return;}
+    const p=pos(e);
+    let near=false,inside=false;
+    slices.forEach(s=>{if(!s.enabled)return;
+      const verts=s.mesh?s.mesh.g:s.pts;
+      const tol=s.mesh?0.7/s.mesh.n:0.09;
+      verts.forEach(q=>{if(Math.hypot(q[0]-p[0],(q[1]-p[1])*16/9)<tol)near=true;});
+      const xs=s.pts.map(q=>q[0]),ys=s.pts.map(q=>q[1]);
+      if(p[0]>Math.min(...xs)&&p[0]<Math.max(...xs)&&p[1]>Math.min(...ys)&&p[1]<Math.max(...ys))inside=true;});
+    cv.style.cursor=near?'crosshair':(inside?'move':'crosshair');});
   function down(e){e.preventDefault();const p=pos(e);
     let bs=-1,bk=0,bd=1e9;
     slices.forEach((s,i)=>{if(!s.enabled)return;
@@ -637,11 +662,11 @@ function renderSlices(ctx,W,H,editor){
       const tol=s.mesh?0.7/s.mesh.n:0.09;
       verts.forEach((q,k)=>{
         const d=Math.hypot(q[0]-p[0],(q[1]-p[1])*16/9);if(d<bd){bd=d;bs=i;bk=k;}});});
-    if(bs>=0&&bd<0.12){sel=bs;pushHist();drag={s:bs,c:bk};renderAll();return;}
+    if(bs>=0&&bd<0.12){sel=bs;pushHist();drag={s:bs,c:bk};cv.style.cursor='crosshair';renderAll();return;}
     let hit=-1;
     slices.forEach((s,i)=>{if(!s.enabled)return;const xs=s.pts.map(q=>q[0]),ys=s.pts.map(q=>q[1]);
       if(p[0]>Math.min(...xs)&&p[0]<Math.max(...xs)&&p[1]>Math.min(...ys)&&p[1]<Math.max(...ys))hit=i;});
-    if(hit>=0){sel=hit;pushHist();const s=slices[hit];drag={s:hit,c:-1,off:[p[0]-s.pts[0][0],p[1]-s.pts[0][1]]};renderAll();}
+    if(hit>=0){sel=hit;pushHist();const s=slices[hit];drag={s:hit,c:-1,off:[p[0]-s.pts[0][0],p[1]-s.pts[0][1]]};cv.style.cursor='grabbing';renderAll();}
   }
   function move(e){if(!drag)return;e.preventDefault();const p=pos(e);const s=slices[drag.s];if(!s)return;
     if(drag.c>=0){let x=Math.min(1.2,Math.max(-.2,p[0])), y=Math.min(1.2,Math.max(-.2,p[1]));
@@ -901,6 +926,11 @@ function loop(){requestAnimationFrame(loop);
   if(TL.rate){TL.t+=dt*TL.rate;
     if(TL.t>=TL.dur){if(TL.loop)TL.t%=TL.dur;else{TL.t=TL.dur;setRate(0);}}
     else if(TL.t<0){if(TL.loop)TL.t=((TL.t%TL.dur)+TL.dur)%TL.dur;else{TL.t=0;setRate(0);}}
+    // ferma/riparti se non ci sono clip dopo
+    if(TL.rate>0&&!TL.loop){
+      const hasAfter=slices.some(s=>{const a=s.t||DEFT();return s.enabled&&a.start>TL.t+0.01;});
+      if(!hasAfter){TL.t=TL.dur;setRate(0);say('fine clip — stop');}
+    }
     followView();}
   // video comandati dalla testina (master clock) — vedi driveVideos()
   driveVideos();
@@ -1051,10 +1081,12 @@ $('#loadFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new F
   r.onload=()=>{try{loadObj(JSON.parse(r.result));}catch(err){toast('file non valido');}};r.readAsText(f);e.target.value='';};
 $('#helpBtn').onclick=()=>$('#help').style.display='flex';
 $('#keysBtn').onclick=()=>$('#keys').style.display='flex';
-$('#tabMedia').onclick=()=>{ $('#tabMedia').classList.add('act');$('#tabFX').classList.remove('act');
-  $('#paneMedia').style.display='block';$('#paneFX').style.display='none';};
-$('#tabFX').onclick=()=>{ $('#tabFX').classList.add('act');$('#tabMedia').classList.remove('act');
-  $('#paneMedia').style.display='none';$('#paneFX').style.display='block';renderFX();};
+$('#tabMedia').onclick=()=>{ $('#tabMedia').classList.add('act');$('#tabFX').classList.remove('act');$('#tabQuick').classList.remove('act');
+  $('#paneMedia').style.display='block';$('#paneFX').style.display='none';$('#paneQuick').style.display='none';};
+$('#tabFX').onclick=()=>{ $('#tabFX').classList.add('act');$('#tabMedia').classList.remove('act');$('#tabQuick').classList.remove('act');
+  $('#paneMedia').style.display='none';$('#paneFX').style.display='block';$('#paneQuick').style.display='none';renderFX();};
+$('#tabQuick').onclick=()=>{ $('#tabQuick').classList.add('act');$('#tabMedia').classList.remove('act');$('#tabFX').classList.remove('act');
+  $('#paneMedia').style.display='none';$('#paneFX').style.display='none';$('#paneQuick').style.display='block';syncQuickbar();};
 document.addEventListener('keydown',e=>{
   if((e.metaKey||e.ctrlKey)&&(e.key==='z'||e.key==='Z')){e.preventDefault();(e.shiftKey||e.altKey)?doRedo():doUndo();return;}
   if(e.ctrlKey&&(e.key==='y'||e.key==='Y')){e.preventDefault();doRedo();return;}
