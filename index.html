@@ -926,10 +926,11 @@ function loop(){requestAnimationFrame(loop);
   if(TL.rate){TL.t+=dt*TL.rate;
     if(TL.t>=TL.dur){if(TL.loop)TL.t%=TL.dur;else{TL.t=TL.dur;setRate(0);}}
     else if(TL.t<0){if(TL.loop)TL.t=((TL.t%TL.dur)+TL.dur)%TL.dur;else{TL.t=0;setRate(0);}}
-    // ferma/riparti se non ci sono clip dopo
+    // ferma/riparti se non ci sono clip attive qui o dopo
     if(TL.rate>0){
+      const hasClipHere=slices.some(s=>{const a=s.t||DEFT();return s.enabled&&TL.t>=a.start&&TL.t<=a.start+a.dur;});
       const hasAfter=slices.some(s=>{const a=s.t||DEFT();return s.enabled&&a.start>TL.t+0.01;});
-      if(!hasAfter){
+      if(!hasClipHere&&!hasAfter){
         if(TL.loop){TL.t=0;syncVideosToTimeline();kickMedia();say('fine clip — riparto da capo');}
         else{TL.t=TL.dur;setRate(0);say('fine clip — stop');}
       }
