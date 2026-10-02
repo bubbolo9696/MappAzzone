@@ -1,0 +1,19 @@
+MappAzzone 2.0 su Windows — videomapping essenziale (100% offline)
+================================================================
+
+AVVIO RAPIDO
+1. Scompatta questa cartella dove vuoi.
+2. Doppio click su MappAzzone-Windows.bat
+   (apre una finestra dedicata con Chrome/Edge; in alternativa
+   apri index.html con un doppio click nel browser).
+
+Se il .bat non parte: apri index.html direttamente in Chrome o Edge.
+Funziona senza internet: video, mapping, timeline e salvataggi locali.
+
+TASTI (su Windows Ctrl al posto di Cmd, Alt al posto di Opzione):
+Spazio play/pausa · J/K/L navetta · C lama · B lama alla testina ·
+Q/W trim · M marker · S magnete · Ctrl+Z annulla · Ctrl+X/C/V/D ·
+Canc elimina · E salva · F proietta.
+
+REQUISITI: Windows 10/11 + Chrome o Edge aggiornato. Nessun altro software.
+I file video/immagini/SVG si trascinano dentro l'app.
